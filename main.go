@@ -10,9 +10,9 @@ import (
 )
 
 func main() {
-	day, part := parseArgs()
+	day, part, inputFileNumber := parseArgs()
 
-	challenges := [][]func() (string, error){
+	challenges := [][]func(int) (string, error){
 		{day01.Part1, day01.Part2},
 	}
 
@@ -30,7 +30,7 @@ func main() {
 	fmt.Printf("========== Day %v Part %v ==========\n", day, part)
 
 	startTime := time.Now()
-	result, err := challenge()
+	result, err := challenge(inputFileNumber)
 	endTime := time.Now()
 	elapsed := endTime.Sub(startTime)
 
@@ -44,15 +44,15 @@ func main() {
 	fmt.Println("==================================")
 }
 
-func parseArgs() (int, int) {
+func parseArgs() (int, int, int) {
 
-	var day, part int
+	var day, part, inputFileNumber int
 	var err error
 
 	args := os.Args[1:]
 
-	if len(args) != 2 {
-		fmt.Println("Must provide 2 arguments: challenge day and challenge part!")
+	if len(args) < 2 {
+		fmt.Println("Must provide at least 2 arguments: challenge day and challenge part!")
 		os.Exit(1)
 	}
 
@@ -68,5 +68,15 @@ func parseArgs() (int, int) {
 		os.Exit(1)
 	}
 
-	return day, part
+	if len(args) > 2 {
+		inputFileNumber, err = strconv.Atoi(args[2])
+		if err != nil {
+			fmt.Println("Third argument (input file number) must be an integer!")
+			os.Exit(1)
+		}
+	} else {
+		inputFileNumber = 0
+	}
+
+	return day, part, inputFileNumber
 }

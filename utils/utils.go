@@ -12,7 +12,7 @@ type InputOptions struct {
 	FileNumber int
 }
 
-func ReadInput(opt InputOptions) []string {
+func ReadInput(opt InputOptions) ([]string, error) {
 	day := fmt.Sprintf("day%02d", opt.Day)
 
 	var filename string
@@ -26,8 +26,7 @@ func ReadInput(opt InputOptions) []string {
 
 	content, err := os.ReadFile(path)
 	if err != nil {
-		fmt.Printf("Cannot find input file %v", path)
-		os.Exit(1)
+		return nil, err
 	}
 
 	var lines []string
@@ -36,5 +35,5 @@ func ReadInput(opt InputOptions) []string {
 		line := scanner.Text()
 		lines = append(lines, line)
 	}
-	return lines
+	return lines, nil
 }

@@ -7,9 +7,12 @@ import (
 	"github.com/TeeAmorn/aoc-go-2023/utils"
 )
 
-func Part1() (string, error) {
-	opts := utils.InputOptions{Day: 1, FileNumber: 0}
-	lines := utils.ReadInput(opts)
+func Part1(inputFileNumber int) (string, error) {
+	opts := utils.InputOptions{Day: 1, FileNumber: inputFileNumber}
+	lines, err := utils.ReadInput(opts)
+	if err != nil {
+		return "", err
+	}
 
 	sum := 0
 	for _, line := range lines {
@@ -38,9 +41,12 @@ func Part1() (string, error) {
 	return strconv.Itoa(sum), nil
 }
 
-func Part2() (string, error) {
-	opts := utils.InputOptions{Day: 1, FileNumber: 0}
-	lines := utils.ReadInput(opts)
+func Part2(inputFileNumber int) (string, error) {
+	opts := utils.InputOptions{Day: 1, FileNumber: inputFileNumber}
+	lines, err := utils.ReadInput(opts)
+	if err != nil {
+		return "", err
+	}
 
 	sum := 0
 	for _, line := range lines {
