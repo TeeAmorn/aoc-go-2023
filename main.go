@@ -27,7 +27,7 @@ func main() {
 		{day05.Part1, day05.Part2},
 		{day06.Part1, day06.Part2},
 		{day07.Part1, day07.Part2},
-		{day08.Part1, day07.Part2},
+		{day08.Part1, day08.Part2},
 	}
 
 	if day > len(challenges) {
