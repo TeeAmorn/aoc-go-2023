@@ -2,6 +2,7 @@ package day10
 
 import (
 	"fmt"
+	"sort"
 	"strconv"
 
 	"github.com/TeeAmorn/aoc-go-2023/utils"
@@ -34,16 +35,41 @@ func Part2(inputFileNumber int) (string, error) {
 
 	path, _ := getLoop(lines)
 
-	loop := make(map[coordinate]rune)
+	rows := make(map[int][]item)
 	for _, t := range path {
-		loop[t] = []rune(lines[t.i])[t.j]
+		value := []rune(lines[t.i])[t.j]
+		if value == 'S' {
+			value = getStartPipeType(path)
+		}
+		pipe := item{t.j, value}
+		if v, ok := rows[t.i]; ok {
+			rows[t.i] = append(v, pipe)
+		} else {
+			rows[t.i] = []item{pipe}
+		}
 	}
-	start := findStartTile(lines)
-	loop[start] = getStartPipeType(path)
+	for _, r := range rows {
+		sort.SliceStable(r, func(i, j int) bool {
+			return r[i].index < r[j].index
+		})
+	}
 
-	// TODO: use point-in-a-polygon algorithm
+	answer := 0
+	for i := range len(lines) {
+		for j := range len(lines[0]) {
+			inside := isInsideLoop(coordinate{i, j}, rows)
+			if inside {
+				answer += 1
+			}
+		}
+	}
 
-	return strconv.Itoa(0), nil
+	loop := make(map[coordinate]bool)
+	for _, p := range path {
+		loop[p] = true
+	}
+
+	return strconv.Itoa(answer), nil
 }
 
 /*
@@ -255,22 +281,24 @@ func getStartPipeType(path []coordinate) rune {
 
 func deduceRelativeLocation(a coordinate, b coordinate) string {
 	if a.i-b.i == 1 && a.j-b.j == 0 {
-		return "left"
-	} else if a.i-b.i == -1 && a.j-b.j == 0 {
-		return "right"
-	} else if a.i-b.i == 0 && a.j-b.j == 1 {
 		return "above"
-	} else {
+	} else if a.i-b.i == -1 && a.j-b.j == 0 {
 		return "below"
+	} else if a.i-b.i == 0 && a.j-b.j == 1 {
+		return "left"
+	} else {
+		return "right"
 	}
 }
 
-func printTileMap(lines []string, loop map[coordinate]rune) {
+func printTileMap(lines []string, loop map[coordinate]bool, enclosed map[coordinate]bool) {
 	for i := range len(lines) {
 		toPrint := ""
 		for j := range len(lines[0]) {
 			pos := coordinate{i, j}
-			if _, ok := loop[pos]; ok {
+			if enclosed[pos] {
+				toPrint += "X "
+			} else if _, ok := loop[pos]; ok {
 				toPrint += "* "
 			} else {
 				toPrint += ". "
@@ -280,6 +308,37 @@ func printTileMap(lines []string, loop map[coordinate]rune) {
 	}
 }
 
-func isInsideLoop(pos coordinate, loop map[coordinate]rune, tiles []string) bool {
-	return true
+func isInsideLoop(pos coordinate, rows map[int][]item) bool {
+	row, ok := rows[pos.i]
+
+	if !ok {
+		return false
+	}
+
+	start := 0
+	for start < len(row) {
+		if row[start].index > pos.j {
+			break
+		} else if row[start].index == pos.j {
+			return false
+		}
+		start++
+	}
+
+	if start == len(row) {
+		return false
+	}
+
+	isEven := true
+	var previousAngledWall rune
+	for start < len(row) {
+		if (row[start].pipe == 'J' && previousAngledWall == 'F') || (row[start].pipe == '7' && previousAngledWall == 'L') || row[start].pipe == '|' {
+			isEven = !isEven
+		} else if row[start].pipe == 'F' || row[start].pipe == 'L' {
+			previousAngledWall = row[start].pipe
+		}
+		start++
+	}
+
+	return !isEven
 }
