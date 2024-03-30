@@ -17,6 +17,7 @@ import (
 	"github.com/TeeAmorn/aoc-go-2023/day09"
 	"github.com/TeeAmorn/aoc-go-2023/day10"
 	"github.com/TeeAmorn/aoc-go-2023/day11"
+	"github.com/TeeAmorn/aoc-go-2023/day12"
 )
 
 func main() {
@@ -34,6 +35,7 @@ func main() {
 		{day09.Part1, day09.Part2},
 		{day10.Part1, day10.Part2},
 		{day11.Part1, day11.Part2},
+		{day12.Part1, day12.Part2},
 	}
 
 	if day > len(challenges) {
