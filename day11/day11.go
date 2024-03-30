@@ -1,7 +1,6 @@
 package day11
 
 import (
-	"fmt"
 	"math"
 	"strconv"
 
@@ -16,7 +15,7 @@ func Part1(inputFileNumber int) (string, error) {
 	opts := utils.InputOptions{Day: 11, FileNumber: inputFileNumber}
 	lines, _ := utils.ReadInput(opts)
 
-	galaxies := getGalaxyPositions(lines)
+	galaxies := getGalaxyPositions(lines, 2)
 	ans := 0
 	for i := 0; i < len(galaxies)-1; i++ {
 		for j := i + 1; j < len(galaxies); j++ {
@@ -34,8 +33,16 @@ func Part1(inputFileNumber int) (string, error) {
 func Part2(inputFileNumber int) (string, error) {
 	opts := utils.InputOptions{Day: 11, FileNumber: inputFileNumber}
 	lines, _ := utils.ReadInput(opts)
-	fmt.Println(lines)
-	return "", nil
+
+	galaxies := getGalaxyPositions(lines, 1000000)
+	ans := 0
+	for i := 0; i < len(galaxies)-1; i++ {
+		for j := i + 1; j < len(galaxies); j++ {
+			ans += getManhattanDistance(galaxies[i], galaxies[j])
+		}
+	}
+
+	return strconv.Itoa(ans), nil
 }
 
 /*
@@ -47,7 +54,7 @@ type pos struct {
 	y int
 }
 
-func getGalaxyPositions(lines []string) []pos {
+func getGalaxyPositions(lines []string, multiplier int) []pos {
 	galaxies := []pos{}
 	nonEmptyRows, nonEmptyCols := getNonEmptyRowsAndCols(lines)
 
@@ -56,13 +63,13 @@ func getGalaxyPositions(lines []string) []pos {
 		colOffset := 0
 
 		if !nonEmptyRows[i] {
-			rowOffset += 1
+			rowOffset += multiplier - 1
 			continue
 		}
 
 		for j, c := range line {
 			if !nonEmptyCols[j] {
-				colOffset += 1
+				colOffset += multiplier - 1
 				continue
 			}
 
